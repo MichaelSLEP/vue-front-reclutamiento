@@ -1,5 +1,9 @@
 <template>
-  <router-view />
+  <div
+    class="min-h-screen bg-gradient-to-br from-rose-100 via-amber-100 to-emerald-100 py-10 px-6"
+  >
+    <router-view />
+  </div>
 </template>
 
 <script setup lang="ts"></script>

@@ -6,20 +6,24 @@ import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/lara";
 import { definePreset } from "@primeuix/themes";
 
+import AutoComplete from "primevue/autocomplete";
 import Button from "primevue/button";
-import Menubar from "primevue/menubar";
 import Card from "primevue/card";
+import Checkbox from "primevue/checkbox";
+import Divider from "primevue/divider";
+import FileUpload from "primevue/fileupload";
 import InputText from "primevue/inputtext";
 import InputMask from "primevue/inputmask";
+import Listbox from "primevue/listbox";
+import Menubar from "primevue/menubar";
 import MultiSelect from "primevue/multiselect";
+import Password from "primevue/password";
 import ProgressSpinner from "primevue/progressspinner";
 import Panel from "primevue/panel";
-import Divider from "primevue/divider";
 import Select from "primevue/select";
 import Toast from "primevue/toast";
 import Textarea from "primevue/textarea";
-import FileUpload from "primevue/fileupload";
-import Password from "primevue/password";
+import InputNumber from "primevue/inputnumber";
 
 const app = createApp(App);
 
@@ -49,20 +53,22 @@ app.use(PrimeVue, {
 });
 
 app.component("Button", Button);
-app.component("Menubar", Menubar);
+app.component("Card", Card);
+app.component("Checkbox", Checkbox);
+app.component("InputMask", InputMask);
+app.component("InputNumber", InputNumber);
 app.component("InputText", InputText);
 app.component("Select", Select);
-app.component("Select", Select);
+app.component("Menubar", Menubar);
 app.component("MultiSelect", MultiSelect);
-app.component("Button", Button);
-app.component("Card", Card);
 app.component("ProgressSpinner", ProgressSpinner);
 app.component("Panel", Panel);
 app.component("Divider", Divider);
 app.component("Toast", Toast);
-app.component("InputMask", InputMask);
 app.component("Textarea", Textarea);
 app.component("Password", Password);
 app.component("FileUpload", FileUpload);
+app.component("AutoComplete", AutoComplete);
+app.component("Listbox", Listbox);
 
 app.mount("#app");

@@ -1,34 +1,56 @@
 <template>
-  <div
-    class="relative min-h-[40rem] lg:min-h-0 bg-surface-0 dark:bg-surface-900 flex lg:flex-row flex-col"
-  >
+  <div class="relative min-h-[40rem] lg:min-h-0 flex lg:flex-row flex-col">
     <div
       class="flex lg:flex lg:flex-row flex-col justify-center md:justify-normal h-full flex-1"
     >
       <div class="relative flex-1 z-20 flex items-center justify-center">
         <div class="flex items-center justify-center h-full">
           <div
-            class="w-full max-w-2xl px-6 py-12 lg:p-12 xl:p-16 text-center lg:text-left"
+            class="w-full max-w-2xl px-6 py-12 lg:p-12 xl:p-4 text-center lg:text-left"
           >
+            <img
+              src=""
+              alt="Logo"
+              srcset="../assets/Logotipo-Chinchorro-web-01.png"
+              class="h-auto mb-8 mx-auto lg:mx-0"
+            />
             <h1
-              class="text-4xl xl:text-5xl font-bold text-surface-0 lg:text-surface-900 dark:text-surface-0 mb-6 !leading-tight"
+              class="text-4xl font-bold text-white-600 md:text-zinc-900 pt-8 mb-6 !leading-tight"
             >
-              <span class="block">Create the screens your</span>
-              <span class="block text-primary">visitors deserve to see</span>
+              <span class="font-bold text-5xl text-primary mb-8"
+                >SISTEMA DE RECLUTAMIENTO</span
+              >
             </h1>
 
+            <p class="font-bold -surface-900 text-3xl mb-8">Bienvenid@</p>
+
             <p
-              class="text-surface-0/90 lg:text-surface-700 dark:text-surface-200 text-xl leading-normal mb-8 max-w-xl lg:max-w-none"
+              class="text-surface-0/90 indent-8 text-justify text-xl leading-normal mb-8 max-w-xl lg:max-w-none"
             >
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              En el Servicio Local de Educación Pública Chinchorro, estamos
+              comprometidos con la excelencia educativa de la región de Arica y
+              Parinacota. Si deseas ser parte de nuestro equipo y contribuir al
+              futuro de nuestras comunidades educativas, te invitamos a unirte a
+              nuestra plataforma.
             </p>
 
+            <p class="font-bold -surface-900 text-3xl mb-8">¿Cómo empezar?</p>
+
+            <ul class="list-disc list-inside text-left text-xl mb-8">
+              <li class="mb-2 text-justify">
+                Si ya eres parte de nuestra red, inicia sesión para acceder a tu
+                perfil y postular a nuevas oportunidades.
+              </li>
+              <li class="mb-2 text-justify">
+                Si es tu primera visita, regístrate para crear tu cuenta y
+                postular a los cargos disponibles.
+              </li>
+            </ul>
             <div
               class="flex items-center gap-4 justify-center lg:justify-start"
             >
-              <Button label="Learn More" type="button" />
-              <Button label="Live Demo" type="button" outlined />
+              <Button label="INICIAR SESIÓN" type="button" />
+              <Button label="REGISTRARSE" type="button" outlined />
             </div>
           </div>
         </div>

@@ -6,23 +6,6 @@
       <span class="text-xl font-semibold text-gray-700">Trimzales</span>
     </div>
 
-    <!-- Navegación -->
-    <ul class="hidden lg:flex gap-8 text-gray-600 font-medium">
-      <li>
-        <a href="#" class="hover:text-emerald-600 transition">Dashboard</a>
-      </li>
-      <li>
-        <a href="#" class="hover:text-emerald-600 transition">Bookmarks</a>
-      </li>
-      <li><a href="#" class="hover:text-emerald-600 transition">Team</a></li>
-      <li>
-        <a href="#" class="hover:text-emerald-600 transition">Messages</a>
-      </li>
-      <li>
-        <a href="#" class="hover:text-emerald-600 transition">Calendar</a>
-      </li>
-    </ul>
-
     <!-- Acciones -->
     <div class="flex items-center gap-4">
       <button class="text-gray-500 hover:text-emerald-600 transition">

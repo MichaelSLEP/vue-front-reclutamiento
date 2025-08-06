@@ -1,75 +1,110 @@
 <template>
-  <div class="relative min-h-[40rem] lg:min-h-0 flex lg:flex-row flex-col">
-    <div
-      class="flex lg:flex lg:flex-row flex-col justify-center md:justify-normal h-full flex-1"
+  <main
+    class="relative min-h-screen grid lg:grid-cols-2 bg-surface text-dark font-sans"
+  >
+    <!-- Sección textual -->
+    <section
+      class="relative z-20 flex items-center justify-center lg:px-6 lg:py-12 p-16"
     >
-      <div class="relative flex-1 z-20 flex items-center justify-center">
-        <div class="flex items-center justify-center h-full">
-          <div
-            class="w-full max-w-2xl px-6 py-12 lg:p-12 xl:p-4 text-center lg:text-left"
-          >
-            <img
-              src=""
-              alt="Logo"
-              srcset="../assets/Logotipo-Chinchorro-web-01.png"
-              class="h-auto mb-8 mx-auto lg:mx-0"
-            />
-            <h1
-              class="text-4xl font-bold text-white-600 md:text-zinc-900 pt-8 mb-6 !leading-tight"
-            >
-              <span class="font-bold text-5xl text-primary mb-8"
-                >SISTEMA DE RECLUTAMIENTO</span
-              >
-            </h1>
+      <div class="max-w-2xl w-full space-y-6 fade-in">
+        <img
+          src="../assets/Logotipo-Chinchorro-web-01.png"
+          alt="Logo Chinchorro"
+          class="mx-0 mb-8"
+        />
 
-            <p class="font-bold -surface-900 text-3xl mb-8">Bienvenid@</p>
+        <h1
+          class="text-[clamp(2.25rem,6vw,3.5rem)] font-bold text-primary leading-tight tracking-tight"
+        >
+          SISTEMA DE RECLUTAMIENTO
+        </h1>
 
-            <p
-              class="text-surface-0/90 indent-8 text-justify text-xl leading-normal mb-8 max-w-xl lg:max-w-none"
-            >
-              En el Servicio Local de Educación Pública Chinchorro, estamos
-              comprometidos con la excelencia educativa de la región de Arica y
-              Parinacota. Si deseas ser parte de nuestro equipo y contribuir al
-              futuro de nuestras comunidades educativas, te invitamos a unirte a
-              nuestra plataforma.
-            </p>
+        <p class="text-accent text-[clamp(1.5rem,3vw,2rem)] font-semibold">
+          ¡Te damos la bienvenida!
+        </p>
 
-            <p class="font-bold -surface-900 text-3xl mb-8">¿Cómo empezar?</p>
+        <p class="max-w-prose text-lg leading-relaxed text-justify">
+          En el Servicio Local de Educación Pública Chinchorro, estamos
+          comprometidos con la excelencia educativa de la región de Arica y
+          Parinacota. Si deseas ser parte de nuestro equipo, te invitamos a
+          unirte a nuestra plataforma.
+        </p>
 
-            <ul class="list-disc list-inside text-left text-xl mb-8">
-              <li class="mb-2 text-justify">
-                Si ya eres parte de nuestra red, inicia sesión para acceder a tu
-                perfil y postular a nuevas oportunidades.
-              </li>
-              <li class="mb-2 text-justify">
-                Si es tu primera visita, regístrate para crear tu cuenta y
-                postular a los cargos disponibles.
-              </li>
-            </ul>
-            <div
-              class="flex items-center gap-4 justify-center lg:justify-start"
-            >
-              <Button label="INICIAR SESIÓN" type="button" />
-              <Button label="REGISTRARSE" type="button" outlined />
-            </div>
-          </div>
+        <h2 class="text-2xl text-accent font-semibold">¿Cómo empezar?</h2>
+
+        <ul
+          class="max-w-prose list-disc list-inside space-y-3 text-lg leading-relaxed text-justify"
+        >
+          <li>
+            Si ya eres parte de nuestra red, inicia sesión para acceder a tu
+            perfil y mantener tus datos actualizados. Esto nos permitirá
+            contactarte cuando surja una oportunidad que se ajuste a tu perfil..
+          </li>
+          <li>
+            Si es tu primera visita. Regístrate para crear tu cuenta y formar
+            parte del banco de datos del área de Reclutamiento y Selección.
+            Cuando exista una vacante que se adapte a tu perfil, nuestro equipo
+            te contactará para iniciar el proceso de selección.
+          </li>
+        </ul>
+
+        <div class="flex flex-wrap gap-4 pt-2">
+          <Button
+            label="Iniciar sesión"
+            icon="pi pi-sign-in"
+            class="bg-primary text-white hover:bg-dark transition-all duration-300"
+            aria-label="Acceder al perfil de usuario"
+            @click="irAlPerfil('/login')"
+          />
+          <Button
+            label="Registrarse"
+            icon="pi pi-user-plus"
+            @click="irAlPerfil('/register')"
+            :pt="{
+              root: { class: 'btn-cyan' },
+            }"
+            aria-label="Acceder al perfil de usuario"
+          />
         </div>
       </div>
+    </section>
 
-      <div class="absolute lg:relative inset-0 lg:inset-auto flex-1">
-        <div
-          class="absolute lg:hidden inset-0 bg-surface-900/60 dark:bg-surface-900/80 z-10"
-        />
-        <img
-          src="https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/hero/hero-1.png"
-          alt="hero-1"
-          class="h-full w-full object-cover xl:[clip-path:polygon(12%_0,100%_0%,100%_100%,0_100%)]"
-        />
-      </div>
-    </div>
-  </div>
+    <!-- Imagen institucional con gradiente -->
+    <aside class="relative" aria-hidden="true">
+      <div
+        class="absolute inset-0 z-10 bg-gradient-to-r from-primary/70 via-transparent to-accent/70"
+      />
+      <img
+        src="../assets/banner.jpg"
+        alt="Imagen institucional Chinchorro"
+        loading="lazy"
+        class="h-full w-full object-cover xl:[clip-path:polygon(12%_0,100%_0,100%_100%,0_100%)]"
+      />
+    </aside>
+  </main>
 </template>
 
 <script setup>
-//import Button from "primevue/button";
+// import Button from 'primevue/button'
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+function irAlPerfil(URL) {
+  router.push(URL);
+}
 </script>
+
+<style>
+.fade-in {
+  animation: fadeIn 1.2s ease-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+</style>

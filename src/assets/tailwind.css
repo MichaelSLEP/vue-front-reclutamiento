@@ -28,3 +28,30 @@
 .bg-surface-0 {
   background-color: #ffffff;
 }
+
+.text-primary {
+  color: #0e7490 !important; /* Color primario */
+}
+
+.btn-cyan {
+  background-color: #a5f3fc !important;
+  color: #0e7490 !important;
+  border: 1px solid #06b6d4 !important;
+  transition: all 0.1s ease-in-out !important;
+}
+
+.btn-cyan:hover {
+  background-color: #6bdbe7 !important;
+}
+
+:root {
+  --primary-color: #195b8e;
+  --primary-hover-color: #003865;
+  --text-color: #333;
+  --surface-ground: #f4f4f4;
+  --font-family: "Poppins", "Inter", sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+}

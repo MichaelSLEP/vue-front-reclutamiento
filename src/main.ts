@@ -5,11 +5,13 @@ import { router } from "./router";
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/lara";
 import { definePreset } from "@primeuix/themes";
+import ToastService from "primevue/toastservice";
 
 import AutoComplete from "primevue/autocomplete";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import Checkbox from "primevue/checkbox";
+import Dialog from "primevue/dialog";
 import Divider from "primevue/divider";
 import FileUpload from "primevue/fileupload";
 import InputText from "primevue/inputtext";
@@ -51,10 +53,12 @@ app.use(PrimeVue, {
     preset: MyPreset,
   },
 });
+app.use(ToastService);
 
 app.component("Button", Button);
 app.component("Card", Card);
 app.component("Checkbox", Checkbox);
+app.component("Dialog", Dialog);
 app.component("InputMask", InputMask);
 app.component("InputNumber", InputNumber);
 app.component("InputText", InputText);

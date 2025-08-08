@@ -334,12 +334,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import Swal from "sweetalert2";
 import { useToast } from "primevue/usetoast";
 import UsuarioPanel from "../components/UsuarioPanel.vue";
+import { useAuthStore } from "../store/authStore";
+import { useRouter } from "vue-router";
 
+const auth = useAuthStore();
 const toast = useToast();
+const router = useRouter();
 
 // 🌍 Regiones y comunas
 const regiones = [
@@ -460,13 +464,52 @@ const subirDocumentos = () => {
     "success"
   );
 };
+console.log("auth del Create", auth);
 
-const usuario = {
-  nombre: "Michael Aguirre Saavedra",
-};
+onMounted(() => {
+  // Simular carga de datos del usuario
+  /*   form.value.rut = "17557157-K";
+  form.value.region = regiones[0];
+  form.value.comuna = comunasFiltradas.value[0];
+  form.value.titulo_profesional = titulosProfesionales[0];
+  form.value.estado_civil = estadosCivil[0];
+  form.value.presentacion_personal = "Hola, soy un candidato entusiasta.";
+  form.value.cargos = [availablePositions[0]]; */
+  console.log("auth del mount", auth);
+
+  if (auth.nombre) {
+    usuario.value = {
+      nombre: auth.nombre,
+      rut: auth.rut || "",
+      email: auth.email || "",
+    };
+  }
+});
+
+const usuario = ref({
+  nombre: "Usuario Error",
+  rut: "",
+  email: "",
+});
 
 function cerrarSesion() {
   // Aquí va tu lógica real de logout
+  Swal.fire({
+    title: "¿Cerrar Session?",
+    text: "Esta seguro que desea cerrar sesión?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, Salir",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#6c757d",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      auth.logout();
+      Swal.fire("See You!", "Nos vemos pronto.", "success");
+      router.replace("/");
+    }
+  });
   console.log("Sesión cerrada");
 }
 </script>

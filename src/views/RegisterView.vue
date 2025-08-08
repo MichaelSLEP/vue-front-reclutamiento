@@ -42,6 +42,8 @@
           <InputText
             id="rut"
             type="text"
+            v-model="rut"
+            @input="onRutInput"
             placeholder="15678432-1"
             class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
           />
@@ -56,6 +58,7 @@
           </label>
           <InputText
             id="name"
+            v-model="nombre"
             type="text"
             placeholder="Juan Pérez"
             class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
@@ -71,6 +74,8 @@
           </label>
           <InputText
             id="email2"
+            v-model="correo"
+            @input="validarCorreo"
             type="email"
             placeholder="correo@ejemplo.cl"
             class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
@@ -87,6 +92,8 @@
           <InputText
             id="password2"
             type="password"
+            v-model="password"
+            @input="validarPassword"
             placeholder="Contraseña segura"
             class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
           />
@@ -116,15 +123,7 @@
         class="w-full rounded-md"
         :disabled="!acceptedTerms"
         aria-label="Registrarse en el sistema"
-        :pt="{
-          root: {
-            class:
-              'flex justify-center items-center gap-2 text-sm py-2 h-9 bg-primary text-white hover:bg-primary-emphasis transition-all duration-300',
-          },
-          icon: {
-            class: '!text-base !leading-normal',
-          },
-        }"
+        @click="registrarUsuario"
       />
     </div>
 
@@ -135,7 +134,84 @@
 <script setup>
 import { ref } from "vue";
 import TerminosModal from "../components/modal/TerminosModal.vue";
+import Swal from "sweetalert2";
+import { useAuthStore } from "../store/authStore";
+import { useRouter } from "vue-router";
+import {
+  validarRut,
+  formatearRut,
+  validarCorreo,
+  validarPassword,
+  limpiarRut,
+} from "../utils/validaciones";
 
+const nombre = ref("");
+const rut = ref("");
+const correo = ref("");
+const password = ref("");
+const auth = useAuthStore();
+const router = useRouter();
 const acceptedTerms = ref(false);
 const modalVisible = ref(false);
+let count = 0;
+
+function onRutInput(e) {
+  const target = e.target;
+  if (target.value === "") {
+    rut.value = "";
+    return;
+  }
+  rut.value = formatearRut(target.value);
+}
+
+async function registrarUsuario() {
+  if (!nombre.value.trim()) {
+    Swal.fire({ icon: "warning", title: "Nombre requerido" });
+    return;
+  }
+
+  if (!validarRut(rut.value)) {
+    Swal.fire({ icon: "warning", title: "RUT inválido" });
+    return;
+  }
+
+  if (!validarCorreo(correo.value)) {
+    Swal.fire({ icon: "warning", title: "Correo inválido" });
+    return;
+  }
+
+  if (!validarPassword(password.value)) {
+    Swal.fire({
+      icon: "warning",
+      title: "Contraseña insegura",
+      text: "Debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.",
+    });
+    return;
+  }
+
+  try {
+    const rutLimpio = limpiarRut(rut.value);
+    count++;
+    await auth.registrar({
+      nombre: nombre.value,
+      rut: rutLimpio,
+      correo: correo.value,
+      password: password.value,
+    });
+
+    Swal.fire({
+      icon: "success",
+      title: "Registro exitoso",
+      text: `Bienvenido, ${auth.nombre}`,
+    });
+
+    router.push("/formulario");
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error al registrar",
+      text: error.message,
+    });
+  }
+}
 </script>

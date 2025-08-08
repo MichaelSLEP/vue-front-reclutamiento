@@ -55,10 +55,12 @@
 
 <script setup>
 import { ref } from "vue";
+import { fa } from "zod/locales";
 
 const visible = ref(false);
 
 const emit = defineEmits(["update:visible"]);
+
 const cerrarModal = () => {
   visible.value = false;
   emit("update:visible", false);

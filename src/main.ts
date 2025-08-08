@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import "./assets/tailwind.css";
 import { router } from "./router";
+import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/lara";
 import { definePreset } from "@primeuix/themes";
@@ -28,6 +29,7 @@ import Textarea from "primevue/textarea";
 import InputNumber from "primevue/inputnumber";
 
 const app = createApp(App);
+const pinia = createPinia();
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -48,6 +50,7 @@ const MyPreset = definePreset(Aura, {
 });
 
 app.use(router);
+app.use(pinia);
 app.use(PrimeVue, {
   theme: {
     preset: MyPreset,

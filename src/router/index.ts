@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../store/authStore";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import FormularioView from "../views/FormularioView.vue";
@@ -30,4 +31,15 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, _, next) => {
+  const auth = useAuthStore();
+  auth.cargarDesdeStorage();
+
+  if (to.meta.requiresAuth && !auth.token) {
+    next("/login");
+  } else {
+    next();
+  }
 });

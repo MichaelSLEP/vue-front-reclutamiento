@@ -33,13 +33,15 @@
       <div class="flex flex-col gap-4 w-full mb-4">
         <div class="flex flex-col gap-1 w-full">
           <label
-            for="email1"
+            for="rut"
             class="text-surface-900 dark:text-surface-0 text-sm font-medium"
           >
             Ingrese su Rut
           </label>
           <InputText
-            id="email1"
+            id="rut"
+            v-model="usuario"
+            @input="onRutInput"
             type="text"
             placeholder="17557157-K"
             class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
@@ -55,6 +57,7 @@
           </label>
           <InputText
             id="password1"
+            v-model="password"
             type="password"
             placeholder="Password"
             class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
@@ -86,15 +89,7 @@
         icon="pi pi-user"
         size="small"
         class="w-full rounded-md"
-        :pt="{
-          root: {
-            class:
-              'flex justify-center items-center gap-2 text-sm py-2 h-9 bg-primary text-white hover:bg-primary-emphasis transition-all duration-300',
-          },
-          icon: {
-            class: '!text-base !leading-normal',
-          },
-        }"
+        @click="iniciarSesion"
       />
     </div>
   </div>
@@ -102,6 +97,53 @@
 
 <script setup>
 import { ref } from "vue";
+import { useAuthStore } from "../store/authStore";
+import { useRouter } from "vue-router";
+import Swal from "sweetalert2";
+import { validarRut, formatearRut, limpiarRut } from "../utils/validaciones";
 
 const checked1 = ref(true);
+const usuario = ref("");
+const password = ref("");
+const auth = useAuthStore();
+const router = useRouter();
+
+function onRutInput(e) {
+  const target = e.target;
+  if (target.value === "") {
+    usuario.value = "";
+    return;
+  }
+  usuario.value = formatearRut(target.value);
+}
+
+async function iniciarSesion() {
+  if (!validarRut(usuario.value)) {
+    Swal.fire({
+      icon: "warning",
+      title: "RUT inválido",
+      text: "Por favor ingresa un RUT válido (Ej: 12345678-9)",
+    });
+    return;
+  }
+
+  try {
+    const rutLimpio = limpiarRut(usuario.value);
+    await auth.login({ usuario: rutLimpio, password: password.value });
+
+    Swal.fire({
+      icon: "success",
+      title: "Bienvenido",
+      text: `Hola ${auth.nombre}`,
+    });
+
+    router.push("/formulario");
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error de acceso",
+      text: error.message,
+    });
+  }
+}
 </script>

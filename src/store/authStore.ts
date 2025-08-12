@@ -1,68 +1,71 @@
 // src/stores/authStore.ts
 import { defineStore } from "pinia";
 import { loginUsuario, registrarUsuario } from "../services/authservice";
+import { ref } from "vue";
 
-interface AuthState {
-  usuario: string | null;
-  token: string | null;
-  nombre: string | null;
-  email: string | null;
-}
+export const useAuthStore = defineStore("auth", () => {
+  const userDataStore = ref({
+    usuario: "",
+    token: "",
+    nombre: "",
+    email: "",
+  });
 
-export const useAuthStore = defineStore("auth", {
-  state: (): AuthState => ({
-    usuario: null,
-    token: null,
-    nombre: null,
-    email: null,
-  }),
-  actions: {
-    async login(payload: { usuario: string; password: string }) {
-      const res = await loginUsuario(payload);
-      console.log("res", res);
+  async function login(payload: { usuario: string; password: string }) {
+    const res = await loginUsuario(payload);
+    console.log("res_LOGIN", res.user);
 
-      this.usuario = payload.usuario;
-      this.token = res.token;
-      this.nombre = res.user.nombre;
-      this.email = res.user.correo;
+    userDataStore.value.usuario = payload.usuario;
+    userDataStore.value.token = res.token;
+    userDataStore.value.nombre = res.user.nombre;
+    userDataStore.value.email = res.user.correo;
 
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("usuario", payload.usuario);
-      localStorage.setItem("nombre", res.user.nombre);
-      /*localStorage.setItem("email", res.email); */
-    },
-    logout() {
-      this.usuario = null;
-      this.token = null;
-      this.nombre = null;
-      this.email = null;
-      localStorage.clear();
-    },
-    cargarDesdeStorage() {
-      this.usuario = localStorage.getItem("usuario");
-      this.token = localStorage.getItem("token");
-      this.nombre = localStorage.getItem("nombre");
-      /* this.email = localStorage.getItem("email"); */
-    },
-    async registrar(payload: {
-      nombre: string;
-      rut: string;
-      correo: string;
-      password: string;
-    }) {
-      const res = await registrarUsuario({
-        usuario: payload.rut,
-        nombre: payload.nombre,
-        email: payload.correo,
-        password: payload.password,
-      });
-      this.token = res.token;
-      this.nombre = res.user.nombre;
-      this.email = res.user.correo;
-      this.usuario = res.user.usuario;
+    localStorage.setItem("token", res.token);
+    localStorage.setItem("usuario", payload.usuario);
+    localStorage.setItem("nombre", res.user.nombre);
+    /*localStorage.setItem("email", res.email); */
+  }
 
-      console.log("res.nombre", res.user.nombre);
-      console.log("this.nombre", this.nombre);
-    },
-  },
+  async function logout() {
+    userDataStore.value.usuario = "";
+    userDataStore.value.token = "";
+    userDataStore.value.nombre = "";
+    userDataStore.value.email = "";
+    localStorage.clear();
+  }
+
+  async function cargarDesdeStorage() {
+    userDataStore.value.usuario = localStorage.getItem("usuario") || "";
+    userDataStore.value.token = localStorage.getItem("token") || "";
+    userDataStore.value.nombre = localStorage.getItem("nombre") || "";
+    /* this.email = localStorage.getItem("email"); */
+  }
+
+  async function registrar(payload: {
+    nombre: string;
+    rut: string;
+    correo: string;
+    password: string;
+  }) {
+    const res = await registrarUsuario({
+      usuario: payload.rut,
+      nombre: payload.nombre,
+      email: payload.correo,
+      password: payload.password,
+    });
+    userDataStore.value.token = res.token;
+    userDataStore.value.nombre = res.user.nombre;
+    userDataStore.value.email = res.user.correo;
+    userDataStore.value.usuario = res.user.usuario;
+
+    console.log("userDataStore.nombre store", userDataStore.value.nombre);
+  }
+
+  return {
+    userDataStore,
+    login,
+    logout,
+    cargarDesdeStorage,
+    registrar,
+  };
 });

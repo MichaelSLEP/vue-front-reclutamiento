@@ -134,7 +134,7 @@ async function iniciarSesion() {
     Swal.fire({
       icon: "success",
       title: "Bienvenido",
-      text: `Hola ${auth.nombre}`,
+      text: `Hola ${auth.userDataStore.nombre}, has iniciado sesión correctamente.`,
     });
 
     router.push("/formulario");

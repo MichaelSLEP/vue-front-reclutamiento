@@ -1,5 +1,5 @@
 // src/services/authService.js
-const API_BASE = "http://localhost:8000/api/auth";
+import api from "../services/apiService";
 
 export async function registrarUsuario(datos: {
   usuario: string;
@@ -7,18 +7,14 @@ export async function registrarUsuario(datos: {
   password: string;
   email: string;
 }) {
-  const res = await fetch(`${API_BASE}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(datos),
-  });
+  const res: any = await api.post("/auth/register", datos);
 
-  if (!res.ok) {
+  if (!res.data) {
     const error = await res.json();
     throw new Error(error.message || "Error al registrar");
   }
 
-  return await res.json();
+  return res.data;
 }
 
 export async function loginUsuario(datos: {
@@ -27,16 +23,12 @@ export async function loginUsuario(datos: {
 }) {
   console.log("Datos de login:", datos);
 
-  const res = await fetch(`${API_BASE}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(datos),
-  });
+  const res: any = await api.post("/auth/login", datos);
 
-  if (!res.ok) {
-    const error = await res.json();
+  if (!res.data) {
+    const error = res.json();
     throw new Error(error.message || "Credenciales inválidas");
   }
 
-  return await res.json();
+  return res.data;
 }

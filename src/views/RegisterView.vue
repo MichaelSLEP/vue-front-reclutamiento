@@ -190,11 +190,10 @@ async function registrarUsuario() {
   }
 
   try {
-    const rutLimpio = limpiarRut(rut.value);
     count++;
     await auth.registrar({
       nombre: nombre.value,
-      rut: rutLimpio,
+      rut: limpiarRut(rut.value),
       correo: correo.value,
       password: password.value,
     });
@@ -202,7 +201,7 @@ async function registrarUsuario() {
     Swal.fire({
       icon: "success",
       title: "Registro exitoso",
-      text: `Bienvenido, ${auth.nombre}`,
+      text: `Hola ${auth.userDataStore.nombre}, has iniciado sesión correctamente.`,
     });
 
     router.push("/formulario");

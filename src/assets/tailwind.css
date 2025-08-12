@@ -59,10 +59,10 @@ body {
 }
 
 html {
-  font-size: 16px; /* o ajusta a 14px si prefieres una escala menor */
+  font-size: 14px; /* o ajusta a 14px si prefieres una escala menor */
 }
 @media (max-width: 640px) {
   html {
-    font-size: 14px; /* Ajusta el tamaño de fuente para pantallas pequeñas */
+    font-size: 12px; /* Ajusta el tamaño de fuente para pantallas pequeñas */
   }
 }

@@ -9,7 +9,10 @@
       />
 
       <!-- Aquí va el panel de usuario -->
-      <UsuarioPanel :nombre="usuario.nombre" :onCerrarSesion="cerrarSesion" />
+      <UsuarioPanel
+        :nombre="auth.userDataStore.nombre"
+        :onCerrarSesion="cerrarSesion"
+      />
     </header>
 
     <div class="flex flex-col md:flex-row gap-6 w-full max-w-7xl mx-auto">
@@ -58,6 +61,7 @@
                 id="rut"
                 type="text"
                 placeholder="15678432-1"
+                v-model="form.rut"
                 class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
               />
             </div>
@@ -70,6 +74,7 @@
               <InputText
                 id="name"
                 type="text"
+                v-model="form.nombre"
                 placeholder="Juan Carlos Pérez González"
                 class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
               />
@@ -87,19 +92,21 @@
               <InputText
                 id="email2"
                 type="email"
+                v-model="form.email"
                 placeholder="correo@ejemplo.cl"
                 class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
               />
             </div>
             <div class="col-span-1 flex flex-col gap-1">
               <label
-                for="fono"
+                for="telefono"
                 class="text-surface-900 dark:text-surface-0 text-sm font-medium"
                 >Teléfono de contacto</label
               >
               <InputText
-                id="fono"
-                type="number"
+                id="telefono"
+                type="text"
+                v-model="form.telefono"
                 placeholder="56 9 95891234"
                 class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
               />
@@ -117,6 +124,7 @@
               <InputText
                 id="direccion"
                 type="text"
+                v-model="form.direccion"
                 placeholder="Avda. Siempre Viva 123"
                 class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
               />
@@ -129,12 +137,14 @@
               >
               <Select
                 v-model="form.region"
-                :options="regiones"
-                size="small"
+                :options="store.estados.regiones"
                 optionLabel="nombre"
+                optionValue="id"
+                size="small"
+                :panelStyle="{ fontSize: '0.875rem' }"
                 placeholder="Región"
                 class="w-full h-9"
-                @change="handleRegionChange"
+                @change="onRegionChange"
               />
             </div>
             <div class="col-span-1 flex flex-col gap-1">
@@ -145,9 +155,11 @@
               >
               <Select
                 v-model="form.comuna"
-                :options="comunasFiltradas"
-                size="small"
+                :options="store.estados.comunas"
                 optionLabel="nombre"
+                optionValue="id"
+                :panelStyle="{ fontSize: '0.875rem' }"
+                size="small"
                 placeholder="Comuna"
                 :disabled="!form.region"
                 class="w-full text-sm h-9"
@@ -159,17 +171,19 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="col-span-1 flex flex-col gap-1">
               <label
-                for="tprofesional"
+                for="Nacionalidad"
                 class="text-surface-900 dark:text-surface-0 text-sm font-medium"
-                >Título Profesional</label
+                >Nacionalidad</label
               >
               <Select
-                v-model="form.titulo_profesional"
-                :options="titulosProfesionales"
-                size="small"
+                v-model="form.nacionalidad"
+                :options="store.estados.nacionalidades"
                 optionLabel="nombre"
-                placeholder="Título Profesional"
-                class="w-full text-sm h-9"
+                optionValue="id"
+                :panelStyle="{ fontSize: '0.875rem' }"
+                size="small"
+                placeholder="Nacionalidad"
+                class="w-full h-9"
               />
             </div>
             <div class="col-span-1 flex flex-col gap-1">
@@ -179,17 +193,20 @@
                 >Estado Civil</label
               >
               <Select
-                v-model="form.estado_civil"
+                v-model="form.estadoCivil"
+                id="estado_civil"
                 :options="estadosCivil"
                 optionLabel="nombre"
+                optionValue="id"
+                :panelStyle="{ fontSize: '0.875rem' }"
                 size="small"
                 placeholder="Estado Civil"
-                class="w-full text-sm h-9"
+                class="w-full h-9"
               />
             </div>
           </div>
 
-          <!-- Presentación y Cargos -->
+          <!-- Presentación  -->
           <div class="flex flex-col gap-1">
             <label
               for="ppersonal"
@@ -204,21 +221,57 @@
               class="w-full text-sm placeholder:text-xs px-2 py-1.5 rounded-md shadow-sm"
             />
           </div>
-          <div class="flex flex-col gap-1">
-            <label
-              for="tprofesional"
-              class="text-surface-900 dark:text-surface-0 text-sm font-medium"
-              >Cargos a los que Postula (1 a 3)</label
-            >
-            <MultiSelect
-              v-model="form.cargos"
-              :options="availablePositions"
-              optionLabel="name"
-              display="chip"
-              :maxSelectedLabels="3"
-              :selectionLimit="3"
-              class="w-full text-sm h-9"
-            />
+
+          <!-- Cargos a los que postula -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="col-span-2 flex flex-col gap-1">
+              <div class="flex flex-col gap-1">
+                <label
+                  for="cargos"
+                  class="text-surface-900 dark:text-surface-0 text-sm font-medium"
+                  >Cargos a los que Postula (1 a 3)</label
+                >
+                <!--              
+                v-model="form.cargos"
+                  :options="store.estados.cargos"
+                  optionLabel="nombre"
+                  optionValue="id" 
+                  -->
+
+                <MultiSelect
+                  v-model="form.cargos"
+                  :options="store.estados.cargos"
+                  optionLabel="nombre"
+                  optionValue="id"
+                  display="chip"
+                  size="small"
+                  filter
+                  placeholder="Seleccionar Cargos a Postular"
+                  :max-selected-labels="3"
+                  :selectionLimit="3"
+                  :panelStyle="{ fontSize: '0.875rem' }"
+                  class="w-full"
+                />
+              </div>
+            </div>
+
+            <div class="col-span-1 flex flex-col gap-1">
+              <label
+                for="tprofesional"
+                class="text-surface-900 dark:text-surface-0 text-sm font-medium"
+                >Título Profesional</label
+              >
+              <Select
+                v-model="form.titulo_profesional"
+                :options="store.estados.titulos"
+                optionLabel="nombre"
+                optionValue="id"
+                size="small"
+                :panelStyle="{ fontSize: '0.875rem' }"
+                placeholder="Título Profesional"
+                class="w-full text-sm h-9"
+              />
+            </div>
           </div>
         </div>
 
@@ -229,7 +282,7 @@
           size="small"
           class="w-full mt-6"
           aria-label="Actualizar Datos"
-          @click="subirDocumentos"
+          @click="actualizarDatos"
         />
       </div>
 
@@ -266,17 +319,27 @@
             </div>
 
             <!-- Nombre + estado -->
-            <div class="flex flex-col">
-              <span v-if="doc.archivo?.guardado" class="text-xs text-gray-600">
+            <div class="flex flex-col min-w-0">
+              <span
+                v-if="doc.archivo?.guardado"
+                class="text-xs text-gray-600 truncate"
+              >
                 <p class="text-cyan-600">Cargado:</p>
                 {{ doc.archivo.nombre }}
               </span>
-              <span v-else-if="doc.archivo" class="text-xs text-gray-600">
+              <span
+                v-else-if="doc.archivo"
+                class="text-xs text-gray-600 truncate"
+              >
                 <p class="text-yellow-500">Pendiente:</p>
                 {{ doc.archivo.nombre }}
               </span>
               <span v-else class="text-xs text-gray-500"> Sin subir </span>
-              <span class="text-gray-800 truncate">{{ doc.nombre }}</span>
+              <span
+                class="text-gray-800 truncate max-w-[calc(100%-10px)] text-sm"
+                :title="doc.nombre"
+                >{{ doc.nombre }}</span
+              >
             </div>
 
             <!-- Acciones -->
@@ -290,7 +353,7 @@
                 </button>
               </template>
 
-              <template v-else>
+              <template v-if="!doc.archivo">
                 <label
                   class="text-xs px-2 py-[2px] border border-cyan-600 text-cyan-700 rounded cursor-pointer hover:bg-cyan-50 transition"
                   title="Subir archivo"
@@ -334,76 +397,48 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import Swal from "sweetalert2";
 import { useToast } from "primevue/usetoast";
 import UsuarioPanel from "../components/UsuarioPanel.vue";
 import { useAuthStore } from "../store/authStore";
 import { useRouter } from "vue-router";
+import { useCandidatoStore } from "../store/candidatoStore";
 
 const auth = useAuthStore();
 const toast = useToast();
 const router = useRouter();
+const store = useCandidatoStore();
 
-// 🌍 Regiones y comunas
-const regiones = [
-  { id: 1, nombre: "Arica y Parinacota" },
-  { id: 2, nombre: "Tarapacá" },
-];
-
-const comunas = [
-  { id: 1, nombre: "Arica", regionId: 1 },
-  { id: 2, nombre: "Putre", regionId: 1 },
-  { id: 3, nombre: "Iquique", regionId: 2 },
-];
-
-const comunasFiltradas = computed(() =>
-  form.value.region
-    ? comunas.filter((c) => c.regionId === form.value.region?.id)
-    : []
-);
-
-function handleRegionChange() {
-  form.value.comuna = null;
-}
-
-// 🎓 Títulos profesionales
-const titulosProfesionales = [
-  { nombre: "Ingeniero Civil" },
-  { nombre: "Psicólogo" },
-  { nombre: "Arquitecto" },
-  { nombre: "Administrador Público" },
-  { nombre: "Contador Auditor" },
-];
+console.log("auth.userDataStore:", auth);
 
 // 👰 Estado Civil
 const estadosCivil = [
-  { nombre: "Soltero" },
-  { nombre: "Casado" },
-  { nombre: "Divorciado" },
-  { nombre: "Viudo" },
+  { id: 1, nombre: "Soltero" },
+  { id: 2, nombre: "Casado" },
+  { id: 3, nombre: "Divorciado" },
+  { id: 4, nombre: "Viudo" },
 ];
 
-// 🧰 Cargos disponibles
-const availablePositions = [
-  { name: "Jefe de Proyecto" },
-  { name: "Analista Funcional" },
-  { name: "Desarrollador Frontend" },
-];
 // 📝 Formulario reactivo
 const form = ref({
-  comuna: null,
-  region: null,
-  titulo_profesional: null,
-  estado_civil: null,
-  rut: "",
-  presentacion_personal: "",
   cargos: [],
-  documentos: ref([]),
+  comuna: null,
+  direccion: "",
+  email: "",
+  estadoCivil: null,
+  nacionalidad: null,
+  nombre: "",
+  presentacion_personal: "",
+  region: null,
+  rut: "",
+  telefono: "",
+  titulo_profesional: null,
 });
 
 // 📄 Documentos esperado
-const documentosEsperados = ref([
+const documentosEsperados = ref([]);
+/* const documentosEsperados = ref([
   { id: 1, nombre: "Contrato firmado", archivo: null },
   {
     id: 2,
@@ -418,12 +453,12 @@ const documentosEsperados = ref([
   { id: 9, nombre: "Carta de presentación", archivo: null },
   { id: 11, nombre: "Referencias laborales", archivo: null },
   { id: 12, nombre: "Otros documentos", archivo: null },
-]);
+]); */
 
 function subirArchivo(id, archivo) {
   const doc = documentosEsperados.value.find((d) => d.id === id);
   if (doc) {
-    doc.archivo = { nombre: archivo.name, guardado: false };
+    doc.archivo = { id, nombre: archivo.name, guardado: false };
   }
 }
 
@@ -464,33 +499,41 @@ const subirDocumentos = () => {
     "success"
   );
 };
-console.log("auth del Create", auth);
 
-onMounted(() => {
-  // Simular carga de datos del usuario
-  /*   form.value.rut = "17557157-K";
-  form.value.region = regiones[0];
-  form.value.comuna = comunasFiltradas.value[0];
-  form.value.titulo_profesional = titulosProfesionales[0];
-  form.value.estado_civil = estadosCivil[0];
-  form.value.presentacion_personal = "Hola, soy un candidato entusiasta.";
-  form.value.cargos = [availablePositions[0]]; */
-  console.log("auth del mount", auth);
+const actualizarDatos = () => {
+  console.log("Datos del formulario:", form.value);
 
-  if (auth.nombre) {
-    usuario.value = {
-      nombre: auth.nombre,
-      rut: auth.rut || "",
-      email: auth.email || "",
-    };
+  Swal.fire(
+    "Datos Almacenados",
+    "Tu información han sido registrada correctamente",
+    "success"
+  );
+};
+
+onBeforeMount(async () => {
+  await store.loadCatalogos(); // espera a que se cargue
+  documentosEsperados.value = store.estados.documentos.map((doc) => ({
+    ...doc,
+    archivo: null, // inicializa el archivo como null
+  }));
+  console.log("Documentos cargados:", documentosEsperados.value);
+  form.value.nombre = auth.userDataStore.nombre || "";
+  form.value.rut = auth.userDataStore.usuario || "";
+  form.value.email = auth.userDataStore.email || "";
+  console.log("auth.userDataStore Bu:", auth);
+});
+
+//Para cuando cambie la region
+function onRegionChange() {
+  if (form.value.region) {
+    store.loadComunas(form.value.region);
   }
-});
+}
 
-const usuario = ref({
-  nombre: "Usuario Error",
-  rut: "",
-  email: "",
-});
+// Para agregar más documentos dinámicamente
+function addDocumento() {
+  store.candidato.documentos.push({ tipo: null, archivo: null });
+}
 
 function cerrarSesion() {
   // Aquí va tu lógica real de logout
@@ -510,7 +553,6 @@ function cerrarSesion() {
       router.replace("/");
     }
   });
-  console.log("Sesión cerrada");
 }
 </script>
 
@@ -541,6 +583,38 @@ function cerrarSesion() {
 }
 
 .text-07 {
-  font-size: 0.775rem !important; /* Tamaño de fuente más pequeño */
+  font-size: 0.875rem !important; /* Tamaño de fuente más pequeño */
+}
+/* Contenedor principal: layout horizontal con chips y trigger */
+::v-deep(.p-multiselect) {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
+  padding: 0.06rem 0.5rem !important;
+}
+
+/* Chips: se envuelven correctamente */
+::v-deep(.p-multiselect-label) {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.25rem !important;
+  align-items: center !important;
+  white-space: normal !important;
+}
+
+/* Trigger (ícono): se mantiene alineado */
+::v-deep(.p-multiselect-trigger) {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 !important;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

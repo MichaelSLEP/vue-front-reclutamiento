@@ -3,6 +3,7 @@ import App from "./App.vue";
 import "./assets/tailwind.css";
 import { router } from "./router";
 import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/lara";
 import { definePreset } from "@primeuix/themes";
@@ -10,6 +11,7 @@ import ToastService from "primevue/toastservice";
 
 import AutoComplete from "primevue/autocomplete";
 import Button from "primevue/button";
+import BlockUI from "primevue/blockui";
 import Card from "primevue/card";
 import Checkbox from "primevue/checkbox";
 import Dialog from "primevue/dialog";
@@ -30,7 +32,7 @@ import InputNumber from "primevue/inputnumber";
 
 const app = createApp(App);
 const pinia = createPinia();
-
+pinia.use(piniaPluginPersistedstate);
 const MyPreset = definePreset(Aura, {
   semantic: {
     primary: {
@@ -49,8 +51,8 @@ const MyPreset = definePreset(Aura, {
   },
 });
 
-app.use(router);
 app.use(pinia);
+app.use(router);
 app.use(PrimeVue, {
   theme: {
     preset: MyPreset,
@@ -58,6 +60,8 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 
+app.component("AutoComplete", AutoComplete);
+app.component("BlockUI", BlockUI);
 app.component("Button", Button);
 app.component("Card", Card);
 app.component("Checkbox", Checkbox);
@@ -75,7 +79,6 @@ app.component("Toast", Toast);
 app.component("Textarea", Textarea);
 app.component("Password", Password);
 app.component("FileUpload", FileUpload);
-app.component("AutoComplete", AutoComplete);
 app.component("Listbox", Listbox);
 
 app.mount("#app");

@@ -21,8 +21,6 @@ export async function loginUsuario(datos: {
   usuario: string;
   password: string;
 }) {
-  console.log("Datos de login:", datos);
-
   const res: any = await api.post("/auth/login", datos);
 
   if (!res.data) {

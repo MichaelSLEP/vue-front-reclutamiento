@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "../store/authStore";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import FormularioView from "../views/FormularioView.vue";
 import StarterView from "../views/StarterView.vue";
+import { useAuthStore } from "../store/authStore";
+import { isTokenExpired } from "../utils/validaciones";
 
 const routes = [
   {
@@ -25,6 +26,7 @@ const routes = [
     path: "/formulario",
     name: "formulario",
     component: FormularioView,
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -33,11 +35,14 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach((to, from, next) => {
   const auth = useAuthStore();
-  auth.cargarDesdeStorage();
 
-  if (to.meta.requiresAuth && !auth.token) {
+  if (
+    to.meta.requiresAuth &&
+    (!auth.user.token || isTokenExpired(auth.user.token))
+  ) {
+    auth.logout();
     next("/login");
   } else {
     next();

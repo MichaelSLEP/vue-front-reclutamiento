@@ -1,4 +1,21 @@
 // src/utils/validaciones.ts
+import { jwtDecode } from "jwt-decode"; // ✅ correcto
+
+interface JwtPayload {
+  exp: number;
+  [key: string]: any;
+}
+
+export function isTokenExpired(token: string): boolean {
+  try {
+    const decoded = jwtDecode<JwtPayload>(token);
+    const now = Math.floor(Date.now() / 1000);
+    return decoded.exp < now;
+  } catch {
+    return true;
+  }
+}
+
 export function validarRut(rut: string): boolean {
   const limpio = rut.replace(/\./g, "").replace(/-/g, "").toUpperCase();
   if (!/^\d{7,8}[0-9K]$/.test(limpio)) return false;

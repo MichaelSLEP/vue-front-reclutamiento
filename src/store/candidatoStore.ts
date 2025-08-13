@@ -1,21 +1,16 @@
 import { defineStore } from "pinia";
 import { ref, reactive } from "vue";
-import type { Estado, Candidato } from "../types";
 import * as service from "../services/candidatoService";
 import api from "../services/apiService";
+import type { Estado, Candidato } from "../types";
 
 export const useCandidatoStore = defineStore("candidato", () => {
+  // 🔄 Estado reactivo
   const loading = ref(false);
   const error = ref<string | null>(null);
-  const estados = reactive<{
-    regiones: Estado[];
-    comunas: Estado[];
-    nacionalidades: Estado[];
-    estadosCiviles: Estado[];
-    titulos: Estado[];
-    cargos: Estado[];
-    documentos: Estado[];
-  }>({
+
+  // 📦 Catálogos institucionales
+  const estados = reactive<Record<string, Estado[]>>({
     regiones: [],
     comunas: [],
     nacionalidades: [],
@@ -25,6 +20,7 @@ export const useCandidatoStore = defineStore("candidato", () => {
     documentos: [],
   });
 
+  // 👤 Datos del candidato
   const candidato = reactive<Candidato>({
     rut: "",
     nombre_completo: "",
@@ -41,73 +37,86 @@ export const useCandidatoStore = defineStore("candidato", () => {
     documentos: [],
   });
 
+  // 📄 Documento temporal (para subida individual)
+  const documentoCandidato = reactive({
+    documento_id: null as number | null,
+    candidato_id: null as number | null,
+    archivo: null as File | null,
+  });
+
+  // 🔧 Helpers
   function setLoading(val: boolean) {
     loading.value = val;
   }
+
   function setError(msg: string | null) {
     error.value = msg;
   }
 
+  // 📥 Cargar todos los catálogos
   async function loadCatalogos() {
     setLoading(true);
+    setError(null);
     try {
       const [reg, nac, est, tit, carg, docs] = await service.fetchCatalogos();
-      estados.regiones = reg.data;
-      estados.nacionalidades = nac.data;
-      estados.estadosCiviles = est.data;
-      estados.titulos = tit.data;
-      estados.cargos = carg.data;
-      estados.documentos = docs.data;
-      console.log("Catalogos cargados:", { reg, nac, est, tit, carg, docs });
+      estados.regiones = reg.data ?? [];
+      estados.nacionalidades = nac.data ?? [];
+      estados.estadosCiviles = est.data ?? [];
+      estados.titulos = tit.data ?? [];
+      estados.cargos = carg.data ?? [];
+      estados.documentos = docs.data ?? [];
+      console.log("📦 Catálogos cargados:", estados);
     } catch (e: any) {
-      setError(e.message);
+      setError(e.message || "Error al cargar catálogos");
+      console.error("❌ loadCatalogos:", e);
     } finally {
-      setLoading(false); // <- esto es CRÍTICO
+      setLoading(false);
     }
   }
 
+  // 📍 Cargar comunas por región
   async function loadComunas(regionId: number) {
+    setError(null);
     try {
       const { data } = await api.get<Estado[]>(
         `/comunas?region_id=${regionId}`
       );
-      estados.comunas = data;
+      estados.comunas = data ?? [];
     } catch (e: any) {
-      setError(e.message);
+      setError(e.message || "Error al cargar comunas");
+      console.error("❌ loadComunas:", e);
     }
   }
 
-  async function saveCandidato() {
+  // 📝 Actualizar datos del candidato
+  async function updateCandidato(candidato_id: number, datos: any) {
+    setLoading(true);
+    setError(null);
     try {
-      const { data } = await service.createCandidato({
-        ...candidato,
-        estado_candidato_id: 1,
-      });
-      const id = data.id;
-      if (candidato.cargos.length)
-        await service.assignCargos(id, candidato.cargos);
-      for (const d of candidato.documentos) {
-        const fd = new FormData();
-        fd.append("documento_id", String(d.tipo));
-        fd.append("file", d.archivo as File);
-        await service.uploadDocumento(id, fd);
-      }
-      return true;
+      const { data } = await service.updateCandidato(candidato_id, datos);
+      return data;
     } catch (e: any) {
-      setError(e.message);
-      return false;
+      setError(e.message || "Error al actualizar candidato");
+      console.error("❌ updateCandidato:", e);
+      return null;
+    } finally {
+      setLoading(false);
     }
   }
 
   return {
+    // Estado
     loading,
     error,
     estados,
     candidato,
+    documentoCandidato,
+
+    // Métodos
     setLoading,
     setError,
     loadCatalogos,
     loadComunas,
-    saveCandidato,
+    updateCandidato,
   };
 });

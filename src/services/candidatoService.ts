@@ -17,6 +17,9 @@ export const createCandidato = (payload: CandidatoPayload) =>
 export const assignCargos = (id: number, cargos: number[]) =>
   api.post(`/candidatos/${id}/cargos`, { cargos });
 
+export const updateCandidato = (id: number, datos: any) =>
+  api.put(`/candidatos/${id}`, { datos });
+
 export const uploadDocumento = (id: number, formData: FormData) =>
   api.post(`/candidatos/${id}/documento`, formData, {
     headers: { "Content-Type": "multipart/form-data" },

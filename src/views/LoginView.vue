@@ -105,7 +105,7 @@ import { validarRut, formatearRut, limpiarRut } from "../utils/validaciones";
 const checked1 = ref(true);
 const usuario = ref("");
 const password = ref("");
-const auth = useAuthStore();
+const authStore = useAuthStore();
 const router = useRouter();
 
 function onRutInput(e) {
@@ -129,12 +129,12 @@ async function iniciarSesion() {
 
   try {
     const rutLimpio = limpiarRut(usuario.value);
-    await auth.login({ usuario: rutLimpio, password: password.value });
+    await authStore.login({ usuario: rutLimpio, password: password.value });
 
     Swal.fire({
       icon: "success",
       title: "Bienvenido",
-      text: `Hola ${auth.userDataStore.nombre}, has iniciado sesión correctamente.`,
+      text: `Hola ${authStore.user.nombre}, has iniciado sesión correctamente.`,
     });
 
     router.push("/formulario");

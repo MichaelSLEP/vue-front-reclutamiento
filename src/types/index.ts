@@ -27,6 +27,23 @@ export interface Candidato extends CandidatoPayload {
   documentos: DocumentoItem[];
 }
 
+/* export interface CandidatoResponse {
+  id: number;
+  rut: string;
+  nombre_completo: string;
+  telefono: string;
+  correo: string;
+  titulo_profesional_id: number | null;
+  nacionalidad_id: number | null;
+  estado_civil_id: number | null;
+  direccion: string;
+  region_id: number | null;
+  comuna_id: number | null;
+  estado_candidato_id: number;
+  cargos: { id: number; nombre: string }[];
+  documentos: { id: number; tipo: string; archivo_url: string }[];
+} */
+
 export type CatalogosResponse = [
   { data: Estado[] },
   { data: Estado[] },

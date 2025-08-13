@@ -6,7 +6,14 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useSession } from "./composables/useSession";
+
+onMounted(() => {
+  useSession().init();
+});
+</script>
 
 <style scoped>
 /* Puedes añadir estilos globales aquí si lo necesitas */

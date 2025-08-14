@@ -433,19 +433,15 @@ const form = ref({
   titulo_profesional: null,
 });
 
-// 📄 Documentos esperados
 const documentosEsperados = ref([]);
 
-// 🍍 Store candidato
 const store = ref();
 const loading = computed(() => store.value?.loading ?? true);
 
-// 🚀 Cargar store
 onBeforeMount(async () => {
   store.value = await useCandidato();
 });
 
-// 📄 Cargar documentos cuando estén listos
 watch(
   () => store.value?.estados?.documentos,
   (docs) => {
@@ -459,14 +455,12 @@ watch(
   { immediate: true }
 );
 
-// 🧠 Cargar datos del usuario
 onMounted(() => {
   form.value.nombre = authStore.user?.nombre ?? "";
   form.value.rut = authStore.user?.usuario ?? "";
   form.value.email = authStore.user?.email ?? "";
 });
 
-// 📁 Subir archivo
 function subirArchivo(id: any, archivo: File) {
   const doc: any = documentosEsperados.value.find((d: any) => d.id === id);
   if (doc) {

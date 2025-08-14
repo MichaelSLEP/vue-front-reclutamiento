@@ -153,7 +153,6 @@ const auth = useAuthStore();
 const router = useRouter();
 const acceptedTerms = ref(false);
 const modalVisible = ref(false);
-let count = 0;
 
 function onRutInput(e) {
   const target = e.target;
@@ -190,7 +189,6 @@ async function registrarUsuario() {
   }
 
   try {
-    count++;
     await auth.registrar({
       nombre: nombre.value,
       rut: limpiarRut(rut.value),
@@ -201,7 +199,7 @@ async function registrarUsuario() {
     Swal.fire({
       icon: "success",
       title: "Registro exitoso",
-      text: `Hola ${auth.userDataStore.nombre}, has iniciado sesión correctamente.`,
+      text: `Hola ${auth.candidato.nombre}, has iniciado sesión correctamente.`,
     });
 
     router.push("/formulario");

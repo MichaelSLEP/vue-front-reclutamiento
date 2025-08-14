@@ -10,7 +10,7 @@
 
       <!-- Aquí va el panel de usuario -->
       <UsuarioPanel
-        :nombre="authStore.user.nombre"
+        :nombre="authStore.candidato.nombre_completo"
         :onCerrarSesion="cerrarSesion"
       />
     </header>
@@ -75,7 +75,7 @@
                   <InputText
                     id="name"
                     type="text"
-                    v-model="form.nombre"
+                    v-model="form.nombre_completo"
                     placeholder="Juan Carlos Pérez González"
                     class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
                   />
@@ -93,7 +93,7 @@
                   <InputText
                     id="email2"
                     type="email"
-                    v-model="form.email"
+                    v-model="form.correo"
                     placeholder="correo@ejemplo.cl"
                     class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
                   />
@@ -137,7 +137,7 @@
                     >Región</label
                   >
                   <Select
-                    v-model="form.region"
+                    v-model="form.region_id"
                     :options="store.estados.regiones"
                     optionLabel="nombre"
                     optionValue="id"
@@ -155,21 +155,21 @@
                     >Comuna</label
                   >
                   <Select
-                    v-model="form.comuna"
+                    v-model="form.comuna_id"
                     :options="store.estados.comunas"
                     optionLabel="nombre"
                     optionValue="id"
                     :panelStyle="{ fontSize: '0.875rem' }"
                     size="small"
                     placeholder="Comuna"
-                    :disabled="!form.region"
+                    :disabled="!form.region_id"
                     class="w-full text-sm h-9"
                   />
                 </div>
               </div>
 
               <!-- Título y Estado Civil -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="col-span-1 flex flex-col gap-1">
                   <label
                     for="Nacionalidad"
@@ -177,7 +177,7 @@
                     >Nacionalidad</label
                   >
                   <Select
-                    v-model="form.nacionalidad"
+                    v-model="form.nacionalidad_id"
                     :options="store.estados.nacionalidades"
                     optionLabel="nombre"
                     optionValue="id"
@@ -194,7 +194,7 @@
                     >Estado Civil</label
                   >
                   <Select
-                    v-model="form.estadoCivil"
+                    v-model="form.estado_civil_id"
                     id="estado_civil"
                     :options="estadosCivil"
                     optionLabel="nombre"
@@ -203,6 +203,24 @@
                     size="small"
                     placeholder="Estado Civil"
                     class="w-full h-9"
+                  />
+                </div>
+                <div class="col-span-1 flex flex-col gap-1">
+                  <label
+                    for="Nacionalidad"
+                    class="text-surface-900 dark:text-surface-0 text-sm font-medium"
+                  >
+                    fecha de nacimiento
+                  </label>
+                  <DatePicker
+                    v-model="form.fecha_nacimiento"
+                    showIcon
+                    size="small"
+                    iconDisplay="input"
+                    dateFormat="dd/mm/yy"
+                    class="w-full h-9 text-sm"
+                    :panelStyle="{ fontSize: '0.875rem' }"
+                    :inputStyle="{ fontSize: '0.875rem' }"
                   />
                 </div>
               </div>
@@ -215,7 +233,7 @@
                   >Presentación Personal</label
                 >
                 <Textarea
-                  v-model="form.presentacion_personal"
+                  v-model="form.presentacion"
                   autoResize
                   rows="4"
                   placeholder="Cuéntanos brevemente sobre ti"
@@ -256,7 +274,7 @@
                     >Título Profesional</label
                   >
                   <Select
-                    v-model="form.titulo_profesional"
+                    v-model="form.titulo_profesional_id"
                     :options="store.estados.titulos"
                     optionLabel="nombre"
                     optionValue="id"
@@ -264,7 +282,7 @@
                     :panelStyle="{ fontSize: '0.875rem' }"
                     placeholder="Título Profesional"
                     class="w-full text-sm h-9"
-                  />
+                  ></Select>
                 </div>
               </div>
             </div>
@@ -277,10 +295,10 @@
               class="w-full mt-6"
               aria-label="Actualizar Datos"
               @click="actualizarDatos"
-            />
+            ></Button>
           </div>
 
-          <!-- 🟥 Panel lateral de archivos subidos -->
+          <!-- Panel lateral de archivos subidos -->
           <div
             class="bg-surface-0 dark:bg-surface-900 p-6 shadow-sm rounded-xl w-full md:w-1/3 flex flex-col gap-4"
           >
@@ -357,7 +375,12 @@
                         type="file"
                         class="hidden"
                         @change="
-                          (event) => subirArchivo(doc.id, event.target.files[0])
+                          (event) => {
+                            const target = event.target as HTMLInputElement;
+                            if (target && target.files) {
+                              subirArchivo(doc.id, target.files[0]);
+                            }
+                          }
                         "
                       />
                     </label>
@@ -392,24 +415,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeMount, watch } from "vue";
+import { ref, computed, onMounted, onBeforeMount } from "vue";
 import Swal from "sweetalert2";
 //import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
 import UsuarioPanel from "../components/UsuarioPanel.vue";
 import { useAuthStore } from "../store/authStore";
-import { useCandidato } from "../composables/useCandidato";
-import { useSession } from "../composables/useSession";
+import { useCandidatoStore } from "../store/candidatoStore";
+//import { useSession } from "../composables/useSession";
+import type { Candidato, Documento } from "../types";
 
-// 📦 Stores y servicios
 const authStore = useAuthStore();
+const store = useCandidatoStore();
 /* const toast = useToast(); */
 const router = useRouter();
-const { getTiempoRestante } = useSession();
+//const { getTiempoRestante } = useSession();
 
-console.log("Tiempo restante de sesión:", getTiempoRestante(), "segundos");
+//console.log("Tiempo restante de sesión:", getTiempoRestante(), "segundos");
 
-// 🧠 Estado civil fijo
 const estadosCivil = [
   { id: 1, nombre: "Soltero" },
   { id: 2, nombre: "Casado" },
@@ -417,48 +440,19 @@ const estadosCivil = [
   { id: 4, nombre: "Viudo" },
 ];
 
-// 📝 Formulario reactivo
-const form = ref({
-  cargos: [],
-  comuna: null,
-  direccion: "",
-  email: "",
-  estadoCivil: null,
-  nacionalidad: null,
-  nombre: "",
-  presentacion_personal: "",
-  region: null,
-  rut: "",
-  telefono: "",
-  titulo_profesional: null,
-});
-
-const documentosEsperados = ref([]);
-
-const store = ref();
-const loading = computed(() => store.value?.loading ?? true);
+const documentos = ref<Documento[]>([]);
+const form = ref<Candidato>();
+const documentosEsperados = ref<Documento[]>([]);
+const loading = computed(() => store.loading ?? true);
 
 onBeforeMount(async () => {
-  store.value = await useCandidato();
+  form.value = await authStore.candidato;
 });
 
-watch(
-  () => store.value?.estados?.documentos,
-  (docs) => {
-    if (docs) {
-      documentosEsperados.value = docs.map((doc: any) => ({
-        ...doc,
-        archivo: null,
-      }));
-    }
-  },
-  { immediate: true }
-);
-
-onMounted(() => {
-  form.value.nombre = authStore.user?.nombre ?? "";
-  form.value.rut = authStore.user?.usuario ?? "";
-  form.value.email = authStore.user?.email ?? "";
+onMounted(async () => {
+  documentosEsperados.value = await store.estados.documentos;
+  console.log("form.vale", form.value);
+  console.log("store.vale", form.value);
 });
 
 function subirArchivo(id: any, archivo: File) {
@@ -468,7 +462,6 @@ function subirArchivo(id: any, archivo: File) {
   }
 }
 
-// 🗑️ Confirmar eliminación
 function confirmarEliminacion(id: any) {
   Swal.fire({
     title: "¿Eliminar documento?",
@@ -487,7 +480,6 @@ function confirmarEliminacion(id: any) {
   });
 }
 
-// 🗑️ Eliminar archivo
 function eliminarArchivo(id: any) {
   const doc: any = documentosEsperados.value.find((d: any) => d.id === id);
   if (doc) {
@@ -495,12 +487,10 @@ function eliminarArchivo(id: any) {
   }
 }
 
-// 📥 Descargar archivo
 function descargar(archivo: any) {
   window.open(`/api/files/${archivo.id}`, "_blank");
 }
 
-// 🚀 Simular subida
 function subirDocumentos() {
   Swal.fire(
     "Documentos subidos",
@@ -509,10 +499,10 @@ function subirDocumentos() {
   );
 }
 
-// 💾 Guardar datos
 async function actualizarDatos() {
+  console.log("id candidato", authStore.user.idCandidato);
   console.log("Datos del formulario:", form.value);
-  // await store.value.updateCandidato(authStore.user.id, form.value);
+  await store.value.updateCandidato(authStore.user.idCandidato, form.value);
   Swal.fire(
     "Datos Almacenados",
     "Tu información ha sido registrada correctamente",
@@ -520,14 +510,18 @@ async function actualizarDatos() {
   );
 }
 
-// 🌍 Cambio de región
 function onRegionChange() {
-  if (form.value.region && store.value) {
-    store.value.loadComunas(form.value.region);
+  console.log("entro al metodo");
+  console.log("form.value.region_id", form.value.region_id);
+  console.log("store.value", store);
+
+  if (form.value.region_id && store) {
+    console.log("entro al if");
+
+    store.loadComunas(form.value.region_id);
   }
 }
 
-// 🔒 Cerrar sesión
 function cerrarSesion() {
   Swal.fire({
     title: "¿Cerrar sesión?",

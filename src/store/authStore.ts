@@ -1,23 +1,11 @@
 import { defineStore } from "pinia";
 import { loginUsuario, registrarUsuario } from "../services/authservice";
-
-interface Usuario {
-  id: number | null;
-  usuario: string;
-  token: string;
-  nombre: string;
-  email: string;
-}
+import type { Candidato, Usuario } from "../types";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
-    user: {
-      id: null,
-      usuario: "",
-      token: "",
-      nombre: "",
-      email: "",
-    } as Usuario,
+    user: {} as Usuario,
+    candidato: {} as Candidato,
   }),
 
   getters: {
@@ -29,13 +17,9 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     async login(payload: { usuario: string; password: string }) {
       const res = await loginUsuario(payload);
-      this.user = {
-        id: res.user.id,
-        nombre: res.user.nombre,
-        usuario: res.user.usuario,
-        email: res.user.correo,
-        token: res.token,
-      };
+      this.user = res.user;
+      const candidatoFormateado = await this.formatearCandidato(res.candidato);
+      this.candidato = candidatoFormateado;
     },
 
     async registrar(payload: {
@@ -51,24 +35,41 @@ export const useAuthStore = defineStore("auth", {
         password: payload.password,
       });
 
-      this.user = {
-        id: res.user.id,
-        nombre: res.user.nombre,
-        usuario: res.user.usuario,
-        email: res.user.correo,
-        token: res.token,
-      };
+      this.user = res.user;
+      const candidatoFormateado = await this.formatearCandidato(res.candidato);
+      this.candidato = candidatoFormateado;
     },
 
     logout() {
-      this.user = {
-        id: null,
-        usuario: "",
-        token: "",
-        nombre: "",
-        email: "",
-      };
+      (Object.keys(this.user) as Array<keyof Usuario>).forEach((key) => {
+        delete this.user[key];
+      });
+      (Object.keys(this.candidato) as Array<keyof Candidato>).forEach((key) => {
+        delete this.candidato[key];
+      });
       localStorage.removeItem("auth");
+    },
+
+    async formatearCandidato(candidato: any) {
+      const idsCargos = await candidato.cargos.map((cargo: any) => cargo.id);
+      return {
+        id: candidato.id,
+        rut: candidato.rut,
+        nombre_completo: candidato.nombre_completo,
+        titulo_profesional_id: candidato.titulo_profesional_id,
+        telefono: candidato.telefono,
+        correo: candidato.correo,
+        estado_candidato_id: candidato.estado_candidato_id,
+        nacionalidad_id: candidato.nacionalidad_id,
+        estado_civil_id: candidato.estado_civil_id,
+        direccion: candidato.direccion,
+        comuna_id: candidato.comuna_id,
+        usuario_id: candidato.usuario_id,
+        fecha_nacimiento: candidato.fecha_nacimiento,
+        presentacion: candidato.presentacion,
+        region_id: candidato.comuna.regione.id || null,
+        cargos: idsCargos || [],
+      };
     },
   },
 

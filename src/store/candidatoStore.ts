@@ -4,12 +4,10 @@ import * as service from "../services/candidatoService";
 import api from "../services/apiService";
 import type { Estado, Candidato } from "../types";
 
-export const useCandidatoStore = defineStore("candidato", () => {
-  // 🔄 Estado reactivo
+export const useCandidatoStore = defineStore("formCandidato", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  // 📦 Catálogos institucionales
   const estados = reactive<Record<string, Estado[]>>({
     regiones: [],
     comunas: [],
@@ -20,24 +18,6 @@ export const useCandidatoStore = defineStore("candidato", () => {
     documentos: [],
   });
 
-  // 👤 Datos del candidato
-  const candidato = reactive<Candidato>({
-    rut: "",
-    nombre_completo: "",
-    telefono: "",
-    correo: "",
-    titulo_profesional_id: null,
-    nacionalidad_id: null,
-    estado_civil_id: null,
-    direccion: "",
-    estado_candidato_id: 1,
-    region_id: null,
-    comuna_id: null,
-    cargos: [],
-    documentos: [],
-  });
-
-  // 📄 Documento temporal (para subida individual)
   const documentoCandidato = reactive({
     documento_id: null as number | null,
     candidato_id: null as number | null,
@@ -53,7 +33,6 @@ export const useCandidatoStore = defineStore("candidato", () => {
     error.value = msg;
   }
 
-  // 📥 Cargar todos los catálogos
   async function loadCatalogos() {
     setLoading(true);
     setError(null);
@@ -64,11 +43,15 @@ export const useCandidatoStore = defineStore("candidato", () => {
       estados.estadosCiviles = est.data ?? [];
       estados.titulos = tit.data ?? [];
       estados.cargos = carg.data ?? [];
-      estados.documentos = docs.data ?? [];
-      console.log("📦 Catálogos cargados:", estados);
+      estados.documentos =
+        docs.data.map((doc: any) => ({
+          ...doc,
+          archivo: null,
+        })) ?? [];
+      console.log("Catálogos cargados:", estados);
     } catch (e: any) {
       setError(e.message || "Error al cargar catálogos");
-      console.error("❌ loadCatalogos:", e);
+      console.error(" loadCatalogos:", e);
     } finally {
       setLoading(false);
     }
@@ -84,12 +67,12 @@ export const useCandidatoStore = defineStore("candidato", () => {
       estados.comunas = data ?? [];
     } catch (e: any) {
       setError(e.message || "Error al cargar comunas");
-      console.error("❌ loadComunas:", e);
+      console.error("loadComunas:", e);
     }
   }
 
   // 📝 Actualizar datos del candidato
-  async function updateCandidato(candidato_id: number, datos: any) {
+  async function updateCandidato(candidato_id: number, datos: Candidato) {
     setLoading(true);
     setError(null);
     try {
@@ -97,7 +80,7 @@ export const useCandidatoStore = defineStore("candidato", () => {
       return data;
     } catch (e: any) {
       setError(e.message || "Error al actualizar candidato");
-      console.error("❌ updateCandidato:", e);
+      console.error("updateCandidato:", e);
       return null;
     } finally {
       setLoading(false);
@@ -109,7 +92,6 @@ export const useCandidatoStore = defineStore("candidato", () => {
     loading,
     error,
     estados,
-    candidato,
     documentoCandidato,
 
     // Métodos

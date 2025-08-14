@@ -14,6 +14,7 @@ import Button from "primevue/button";
 import BlockUI from "primevue/blockui";
 import Card from "primevue/card";
 import Checkbox from "primevue/checkbox";
+import DatePicker from "primevue/datepicker";
 import Dialog from "primevue/dialog";
 import Divider from "primevue/divider";
 import FileUpload from "primevue/fileupload";
@@ -57,6 +58,23 @@ app.use(PrimeVue, {
   theme: {
     preset: MyPreset,
   },
+  locale: {
+    dayNamesMin: ["D", "L", "M", "X", "J", "V", "S"],
+    monthNames: [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ],
+  },
 });
 app.use(ToastService);
 
@@ -80,5 +98,6 @@ app.component("Textarea", Textarea);
 app.component("Password", Password);
 app.component("FileUpload", FileUpload);
 app.component("Listbox", Listbox);
+app.component("DatePicker", DatePicker);
 
 app.mount("#app");

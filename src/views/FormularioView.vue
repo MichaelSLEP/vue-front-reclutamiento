@@ -10,7 +10,7 @@
 
       <!-- Aquí va el panel de usuario -->
       <UsuarioPanel
-        :nombre="authStore.candidato.nombre_completo"
+        :nombre="store.authStore.candidato.nombre_completo"
         :onCerrarSesion="cerrarSesion"
       />
     </header>
@@ -63,7 +63,7 @@
                     type="text"
                     placeholder="15678432-1"
                     v-model="form.rut"
-                    class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
+                    class="w-full xs placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
                   />
                 </div>
                 <div class="col-span-2 flex flex-col gap-1">
@@ -77,7 +77,7 @@
                     type="text"
                     v-model="form.nombre_completo"
                     placeholder="Juan Carlos Pérez González"
-                    class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
+                    class="w-full xs placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
                   />
                 </div>
               </div>
@@ -95,7 +95,7 @@
                     type="email"
                     v-model="form.correo"
                     placeholder="correo@ejemplo.cl"
-                    class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
+                    class="w-full xs placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
                   />
                 </div>
                 <div class="col-span-1 flex flex-col gap-1">
@@ -109,13 +109,13 @@
                     type="text"
                     v-model="form.telefono"
                     placeholder="56 9 95891234"
-                    class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
+                    class="w-full xs placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
                   />
                 </div>
               </div>
 
               <!-- Dirección, Región, Comuna -->
-              <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
                 <div class="col-span-3 flex flex-col gap-1">
                   <label
                     for="direccion"
@@ -127,10 +127,10 @@
                     type="text"
                     v-model="form.direccion"
                     placeholder="Avda. Siempre Viva 123"
-                    class="w-full text-sm placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
+                    class="w-full xs placeholder:text-xs px-2 py-1.5 h-9 rounded-md shadow-sm"
                   />
                 </div>
-                <div class="col-span-1 flex flex-col gap-1">
+                <div class="col-span-2 flex flex-col gap-1">
                   <label
                     for="region"
                     class="text-surface-900 dark:text-surface-0 text-sm font-medium"
@@ -143,6 +143,7 @@
                     optionValue="id"
                     size="small"
                     :panelStyle="{ fontSize: '0.875rem' }"
+                    :inputStyle="{ fontSize: '0.875rem' }"
                     placeholder="Región"
                     class="w-full h-9"
                     @change="onRegionChange"
@@ -160,6 +161,7 @@
                     optionLabel="nombre"
                     optionValue="id"
                     :panelStyle="{ fontSize: '0.875rem' }"
+                    :inputStyle="{ fontSize: '0.875rem' }"
                     size="small"
                     placeholder="Comuna"
                     :disabled="!form.region_id"
@@ -182,6 +184,7 @@
                     optionLabel="nombre"
                     optionValue="id"
                     :panelStyle="{ fontSize: '0.875rem' }"
+                    :inputStyle="{ fontSize: '0.875rem' }"
                     size="small"
                     placeholder="Nacionalidad"
                     class="w-full h-9"
@@ -200,6 +203,7 @@
                     optionLabel="nombre"
                     optionValue="id"
                     :panelStyle="{ fontSize: '0.875rem' }"
+                    :inputStyle="{ fontSize: '0.875rem' }"
                     size="small"
                     placeholder="Estado Civil"
                     class="w-full h-9"
@@ -218,7 +222,7 @@
                     size="small"
                     iconDisplay="input"
                     dateFormat="dd/mm/yy"
-                    class="w-full h-9 text-sm"
+                    class="w-full h-9"
                     :panelStyle="{ fontSize: '0.875rem' }"
                     :inputStyle="{ fontSize: '0.875rem' }"
                   />
@@ -237,13 +241,13 @@
                   autoResize
                   rows="4"
                   placeholder="Cuéntanos brevemente sobre ti"
-                  class="w-full text-sm placeholder:text-xs px-2 py-1.5 rounded-md shadow-sm"
+                  class="w-full xs placeholder:text-xs px-2 py-1.5 rounded-md shadow-sm"
                 />
               </div>
 
               <!-- Cargos a los que postula -->
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="col-span-2 flex flex-col gap-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-1 flex flex-col gap-1">
                   <div class="flex flex-col gap-1">
                     <label
                       for="cargos"
@@ -262,6 +266,7 @@
                       :max-selected-labels="3"
                       :selectionLimit="3"
                       :panelStyle="{ fontSize: '0.875rem' }"
+                      :inputStyle="{ fontSize: '0.875rem' }"
                       class="w-full"
                     />
                   </div>
@@ -280,8 +285,9 @@
                     optionValue="id"
                     size="small"
                     :panelStyle="{ fontSize: '0.875rem' }"
+                    :inputStyle="{ fontSize: '0.875rem' }"
                     placeholder="Título Profesional"
-                    class="w-full text-sm h-9"
+                    class="w-full xs h-9"
                   ></Select>
                 </div>
               </div>
@@ -361,7 +367,7 @@
                       class="text-xs px-2 py-[2px] border border-cyan-600 text-cyan-700 rounded hover:bg-cyan-50 transition"
                       @click="descargar(doc.archivo)"
                     >
-                      Descargar
+                      <i class="pi pi-download"></i>
                     </button>
                   </template>
 
@@ -391,20 +397,12 @@
                       class="text-xs px-2 py-[2px] border border-red-500 text-red-600 rounded hover:bg-red-50 transition"
                       @click="confirmarEliminacion(doc.id)"
                     >
-                      Eliminar
+                      <i class="pi pi-trash"></i>
                     </button>
                   </template>
                 </div>
               </div>
             </div>
-            <Button
-              label="Subir Documentos"
-              icon="pi pi-upload"
-              size="small"
-              class="w-full mt-6"
-              aria-label="Subir Documentos"
-              @click="subirDocumentos"
-            />
           </div>
         </div>
       </BlockUI>
@@ -415,50 +413,85 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeMount } from "vue";
+import { computed, onMounted, onBeforeMount, reactive } from "vue";
 import Swal from "sweetalert2";
 //import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
 import UsuarioPanel from "../components/UsuarioPanel.vue";
-import { useAuthStore } from "../store/authStore";
 import { useCandidatoStore } from "../store/candidatoStore";
-//import { useSession } from "../composables/useSession";
-import type { Candidato, Documento } from "../types";
+import * as service from "../services/candidatoService";
+import { useSession } from "../composables/useSession";
+import type { DocumentoEsperado } from "../types";
 
-const authStore = useAuthStore();
 const store = useCandidatoStore();
 /* const toast = useToast(); */
 const router = useRouter();
-//const { getTiempoRestante } = useSession();
-
-//console.log("Tiempo restante de sesión:", getTiempoRestante(), "segundos");
+const { getTiempoRestante } = useSession();
 
 const estadosCivil = [
-  { id: 1, nombre: "Soltero" },
-  { id: 2, nombre: "Casado" },
-  { id: 3, nombre: "Divorciado" },
-  { id: 4, nombre: "Viudo" },
+  { id: 1, nombre: "Solter@" },
+  { id: 2, nombre: "Casad@" },
+  { id: 3, nombre: "Divorciad@" },
+  { id: 4, nombre: "Viud@" },
 ];
 
-const documentos = ref<Documento[]>([]);
-const form = ref<Candidato>();
-const documentosEsperados = ref<Documento[]>([]);
+//const documentos = ref<Documento[]>([]);
+const form = reactive({
+  id: null,
+  rut: "",
+  nombre_completo: "",
+  correo: "",
+  telefono: "",
+  direccion: "",
+  region_id: null,
+  comuna_id: null,
+  nacionalidad_id: null,
+  estado_civil_id: null,
+  fecha_nacimiento: null,
+  presentacion: "",
+  cargos: [],
+  titulo_profesional_id: null,
+  estado_candidato_id: 1, // Adding required property with default value
+});
+
+const documentosEsperados = reactive<DocumentoEsperado[]>([]);
 const loading = computed(() => store.loading ?? true);
 
 onBeforeMount(async () => {
-  form.value = await authStore.candidato;
+  await store.loadCatalogos();
+  const candidato = await store.authStore.candidato;
+  const docs = await store.estados.documentos;
+  Object.assign(form, candidato);
+  Object.assign(documentosEsperados, docs);
+  onRegionChange();
 });
 
 onMounted(async () => {
-  documentosEsperados.value = await store.estados.documentos;
-  console.log("form.vale", form.value);
-  console.log("store.vale", form.value);
+  console.log("Tiempo restante de sesión:", getTiempoRestante(), "segundos");
 });
 
-function subirArchivo(id: any, archivo: File) {
-  const doc: any = documentosEsperados.value.find((d: any) => d.id === id);
-  if (doc) {
-    doc.archivo = { id, nombre: archivo.name, guardado: false };
+async function subirArchivo(id: any, archivo: File) {
+  console.log("file ID", id);
+
+  const formData = new FormData();
+  formData.append("rut", store.authStore.candidato.rut!); // RUT del candidato
+  formData.append("candidato_id", String(store.authStore.candidato.id || "")); // ID del candidato
+  formData.append("documento_id", id); // ID del tipo de documento
+  formData.append("file", archivo); // Objeto File del input
+  console.log("formData", formData);
+  // Antes de enviar la solicitud, agrega esto:
+  const formDataEntries = [];
+  for (const [key, value] of formData.entries()) {
+    formDataEntries.push({ key, value });
+  }
+  console.log("Contenido de FormData:", formDataEntries);
+  const response = await service.uploadDocumentoCandidato(formData);
+
+  if (response) {
+    const doc: any = documentosEsperados.find((d: any) => d.id === id);
+    if (doc) {
+      doc.archivo = { id, nombre: archivo.name, guardado: false };
+    }
   }
 }
 
@@ -491,18 +524,12 @@ function descargar(archivo: any) {
   window.open(`/api/files/${archivo.id}`, "_blank");
 }
 
-function subirDocumentos() {
-  Swal.fire(
-    "Documentos subidos",
-    "Tus archivos han sido registrados",
-    "success"
-  );
-}
-
 async function actualizarDatos() {
-  console.log("id candidato", authStore.user.idCandidato);
-  console.log("Datos del formulario:", form.value);
-  await store.value.updateCandidato(authStore.user.idCandidato, form.value);
+  if (!store.authStore.user.idCandidato) {
+    Swal.fire("Error", "ID de candidato no válido", "error");
+    return;
+  }
+  await store.updateCandidato(store.authStore.user.idCandidato, form);
   Swal.fire(
     "Datos Almacenados",
     "Tu información ha sido registrada correctamente",
@@ -511,14 +538,8 @@ async function actualizarDatos() {
 }
 
 function onRegionChange() {
-  console.log("entro al metodo");
-  console.log("form.value.region_id", form.value.region_id);
-  console.log("store.value", store);
-
-  if (form.value.region_id && store) {
-    console.log("entro al if");
-
-    store.loadComunas(form.value.region_id);
+  if (form.region_id && store) {
+    store.loadComunas(form.region_id);
   }
 }
 
@@ -554,7 +575,7 @@ function cerrarSesion() {
 }
 
 .xs {
-  font-size: 0.75rem !important; /* Tamaño de fuente más pequeño */
+  font-size: 0.875rem !important; /* Tamaño de fuente más pequeño */
 }
 
 .chinchorro-toast .p-toast-message {

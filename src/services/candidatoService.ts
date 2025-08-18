@@ -20,9 +20,12 @@ export const assignCargos = (id: number, cargos: number[]) =>
 export const updateCandidato = (id: number, datos: any) =>
   api.put(`/candidatos/${id}`, { datos });
 
-export const uploadDocumento = (id: number, formData: FormData) =>
-  api.post(`/candidatos/${id}/documento`, formData, {
+export const uploadDocumentoCandidato = (formData: FormData) =>
+  api.post(`/upload_documentoCandidato`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 export const fetchComunas = (regionId: number) =>
   api.get(`/comunas?region_id=${regionId}`);
+
+export const fetchDocumentosCandidato = (candidatoId: number) =>
+  api.get(`/documentos_candidatos/candidato/${candidatoId}`);

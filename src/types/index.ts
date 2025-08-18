@@ -3,7 +3,7 @@ export interface Estado {
   nombre: string;
 }
 
-export interface Documento {
+export interface DocumentoEsperado {
   id: number;
   nombre: string;
   archivo?: {
@@ -13,12 +13,13 @@ export interface Documento {
   } | null;
 }
 
-export interface DocumentoItem {
+export interface documentoCandidato {
   tipo: number | null;
   archivo: File | null;
 }
 
 export interface CandidatoPayload {
+  id: number | null;
   rut: string;
   nombre_completo: string;
   telefono: string;

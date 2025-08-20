@@ -343,14 +343,14 @@
                     class="text-xs text-gray-600 truncate"
                   >
                     <p class="text-cyan-600">Cargado:</p>
-                    {{ doc.archivo.nombre }}
+                    {{ doc.archivo.nombre_para_mostrar }}
                   </span>
                   <span
                     v-else-if="doc.archivo"
                     class="text-xs text-gray-600 truncate"
                   >
                     <p class="text-yellow-500">Pendiente:</p>
-                    {{ doc.archivo.nombre }}
+                    {{ doc.archivo.nombre_para_mostrar }}
                   </span>
                   <span v-else class="text-xs text-gray-500"> Sin subir </span>
                   <span
@@ -365,9 +365,9 @@
                   <template v-if="doc.archivo?.guardado">
                     <button
                       class="text-xs px-2 py-[2px] border border-cyan-600 text-cyan-700 rounded hover:bg-cyan-50 transition"
-                      @click="descargar(doc.archivo)"
+                      @click="descargar(doc)"
                     >
-                      <i class="pi pi-download"></i>
+                      <i class="pi pi-eye"></i>
                     </button>
                   </template>
 
@@ -395,7 +395,7 @@
                   <template v-if="doc.archivo">
                     <button
                       class="text-xs px-2 py-[2px] border border-red-500 text-red-600 rounded hover:bg-red-50 transition"
-                      @click="confirmarEliminacion(doc.id)"
+                      @click="confirmarEliminacion(doc)"
                     >
                       <i class="pi pi-trash"></i>
                     </button>
@@ -422,6 +422,7 @@ import { useCandidatoStore } from "../store/candidatoStore";
 import * as service from "../services/candidatoService";
 import { useSession } from "../composables/useSession";
 import type { DocumentoEsperado } from "../types";
+import { encryptId } from "../utils/validaciones";
 
 const store = useCandidatoStore();
 /* const toast = useToast(); */
@@ -471,31 +472,37 @@ onMounted(async () => {
 });
 
 async function subirArchivo(id: any, archivo: File) {
-  console.log("file ID", id);
+  const doc: any = documentosEsperados.find((d: any) => d.id === id);
+  doc.archivo = {
+    id,
+    nombre: archivo.name,
+    nombre_para_mostrar: archivo.name,
+    guardado: false,
+  };
 
   const formData = new FormData();
-  formData.append("rut", store.authStore.candidato.rut!); // RUT del candidato
-  formData.append("candidato_id", String(store.authStore.candidato.id || "")); // ID del candidato
-  formData.append("documento_id", id); // ID del tipo de documento
-  formData.append("file", archivo); // Objeto File del input
-  console.log("formData", formData);
-  // Antes de enviar la solicitud, agrega esto:
-  const formDataEntries = [];
-  for (const [key, value] of formData.entries()) {
-    formDataEntries.push({ key, value });
-  }
-  console.log("Contenido de FormData:", formDataEntries);
+  formData.append("rut", store.authStore.candidato.rut!);
+  formData.append("candidato_id", String(store.authStore.candidato.id || ""));
+  formData.append("documento_id", id);
+  formData.append("nombre_para_mostrar", archivo.name);
+  formData.append("file", archivo);
+
   const response = await service.uploadDocumentoCandidato(formData);
 
   if (response) {
     const doc: any = documentosEsperados.find((d: any) => d.id === id);
     if (doc) {
-      doc.archivo = { id, nombre: archivo.name, guardado: false };
+      doc.archivo = {
+        id: response.data.documento.id,
+        nombre: response.data.documento.nombre,
+        nombre_para_mostrar: archivo.name,
+        guardado: true,
+      };
     }
   }
 }
 
-function confirmarEliminacion(id: any) {
+function confirmarEliminacion(doc: any) {
   Swal.fire({
     title: "¿Eliminar documento?",
     text: 'Esta acción revertirá el estado a "Sin subir".',
@@ -507,29 +514,56 @@ function confirmarEliminacion(id: any) {
     cancelButtonColor: "#6c757d",
   }).then((result) => {
     if (result.isConfirmed) {
-      eliminarArchivo(id);
+      eliminarArchivo(doc);
       Swal.fire("Eliminado", "El documento ha sido eliminado.", "success");
     }
   });
 }
 
-function eliminarArchivo(id: any) {
-  const doc: any = documentosEsperados.value.find((d: any) => d.id === id);
-  if (doc) {
-    doc.archivo = null;
+async function eliminarArchivo(docto: any) {
+  const doc = documentosEsperados.find((d) => d.id === docto.id);
+  if (!doc || !doc.archivo) return;
+
+  // Si el archivo ya fue guardado en el backend, eliminarlo allí también
+  if (doc.archivo.guardado && doc.archivo.id !== undefined) {
+    try {
+      const encryptedId = encryptId(doc.archivo.id);
+      await service.deleteDocumentoCandidato(encryptedId);
+      doc.archivo = null;
+    } catch (error) {
+      console.error("Error al eliminar archivo en backend:", error);
+      return;
+    }
   }
+  // Eliminar del estado local
+  doc.archivo = null;
 }
 
-function descargar(archivo: any) {
-  window.open(`/api/files/${archivo.id}`, "_blank");
+function descargar(docto: any) {
+  const doc = documentosEsperados.find((d) => d.id === docto.id);
+
+  if (!doc || !doc.archivo) return;
+
+  if (doc.archivo.guardado && doc.archivo.id !== undefined) {
+    try {
+      const encryptedId = encryptId(doc.archivo.id);
+      const url = `${
+        import.meta.env.VITE_API_URL
+      }/upload_documentoCandidato/file/${encryptedId}`;
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("Error al mostrar archivo en backend:", error);
+      return;
+    }
+  }
 }
 
 async function actualizarDatos() {
-  if (!store.authStore.user.idCandidato) {
+  if (!store.authStore.candidato.id) {
     Swal.fire("Error", "ID de candidato no válido", "error");
     return;
   }
-  await store.updateCandidato(store.authStore.user.idCandidato, form);
+  await store.updateCandidato(store.authStore.candidato.id, form);
   Swal.fire(
     "Datos Almacenados",
     "Tu información ha sido registrada correctamente",
@@ -555,7 +589,7 @@ function cerrarSesion() {
     cancelButtonColor: "#6c757d",
   }).then((result) => {
     if (result.isConfirmed) {
-      authStore.logout();
+      store.authStore.logout();
       Swal.fire("See You!", "Nos vemos pronto.", "success");
       router.push("/");
     }

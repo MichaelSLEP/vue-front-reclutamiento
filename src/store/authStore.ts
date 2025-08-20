@@ -51,7 +51,15 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async formatearCandidato(candidato: any) {
-      const idsCargos = await candidato.cargos.map((cargo: any) => cargo.id);
+      let cargos = [];
+      if (candidato.cargos) {
+        cargos = await candidato.cargos.map((cargo: any) => cargo.id);
+      }
+      let region_id = null;
+      if (candidato.comuna) {
+        region_id = candidato.comuna.regione.id;
+      }
+
       return {
         id: candidato.id,
         rut: candidato.rut,
@@ -67,8 +75,8 @@ export const useAuthStore = defineStore("auth", {
         usuario_id: candidato.usuario_id,
         fecha_nacimiento: candidato.fecha_nacimiento,
         presentacion: candidato.presentacion,
-        region_id: candidato.comuna.regione.id || null,
-        cargos: idsCargos || [],
+        region_id,
+        cargos,
       };
     },
   },

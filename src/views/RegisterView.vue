@@ -199,7 +199,7 @@ async function registrarUsuario() {
     Swal.fire({
       icon: "success",
       title: "Registro exitoso",
-      text: `Hola ${auth.candidato.nombre}, has iniciado sesión correctamente.`,
+      text: `Hola ${auth.candidato.nombre_completo}, has iniciado sesión correctamente.`,
     });
 
     router.push("/formulario");

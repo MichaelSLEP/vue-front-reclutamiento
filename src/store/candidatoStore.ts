@@ -35,6 +35,7 @@ export const useCandidatoStore = defineStore("formCandidato", () => {
   }
 
   async function loadCatalogos() {
+    console.log("entro loadCatalogos");
     setLoading(true);
     setError(null);
     try {
@@ -46,25 +47,17 @@ export const useCandidatoStore = defineStore("formCandidato", () => {
       estados.cargos = carg.data ?? [];
 
       if (authStore.candidato.id) {
-        // 1. Obtener documentos con manejo seguro
         const docsResponse = await loadDocumentosCandidatos(
           authStore.candidato.id
         );
-
-        console.log("docsResponse", docsResponse);
-
-        // 2. Crear array seguro
         let docsCandidato: any[] = [];
 
         if (Array.isArray(docsResponse)) {
           docsCandidato = docsResponse;
         } else if (docsResponse && typeof docsResponse === "object") {
-          // Si es un objeto único, convertirlo a array
           docsCandidato = [docsResponse];
         }
-        // Si es null/undefined, docsCandidato queda como array vacío
 
-        // 3. Mapear documentos
         estados.documentos = (docs.data ?? []).map((doc: any) => {
           const doctoBD = docsCandidato.find(
             (dh: any) => dh.documento_id === doc.id
@@ -77,12 +70,14 @@ export const useCandidatoStore = defineStore("formCandidato", () => {
                 archivo: {
                   id: doctoBD.id,
                   nombre: doctoBD.nombre,
+                  nombre_para_mostrar: doctoBD.nombre_para_mostrar,
                   guardado: true,
                 },
               }
             : {
                 id: doc.id,
                 nombre: doc.nombre,
+                nombre_para_mostrar: "",
                 archivo: null,
               };
         });

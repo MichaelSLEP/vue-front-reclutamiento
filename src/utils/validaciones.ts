@@ -1,5 +1,8 @@
 // src/utils/validaciones.ts
 import { jwtDecode } from "jwt-decode"; // ✅ correcto
+import CryptoJS from "crypto-js";
+import baseX from "base-x";
+import { Buffer } from "buffer";
 
 interface JwtPayload {
   exp: number;
@@ -67,4 +70,14 @@ export function validarPassword(pass: string): boolean {
 
 export function limpiarRut(rut: string): string {
   return rut.replace(/\./g, "").toUpperCase();
+}
+
+export function encryptId(id: number): string {
+  const BASE62 =
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const base62 = baseX(BASE62);
+  const secretKey = import.meta.env.VITE_KEY || "cL4v3-superS3cret4";
+  const encrypted = CryptoJS.AES.encrypt(id.toString(), secretKey).toString(); // Base64
+  const bytes = Buffer.from(encrypted, "utf8");
+  return base62.encode(bytes); // Solo alfanumérico
 }

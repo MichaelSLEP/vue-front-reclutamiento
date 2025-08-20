@@ -9,6 +9,7 @@ export interface DocumentoEsperado {
   archivo?: {
     id?: number;
     nombre: string;
+    nombre_para_mostrar: string;
     guardado: boolean;
   } | null;
 }

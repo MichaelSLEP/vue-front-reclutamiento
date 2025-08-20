@@ -29,3 +29,6 @@ export const fetchComunas = (regionId: number) =>
 
 export const fetchDocumentosCandidato = (candidatoId: number) =>
   api.get(`/documentos_candidatos/candidato/${candidatoId}`);
+
+export const deleteDocumentoCandidato = (id: string) =>
+  api.delete(`/upload_documentoCandidato/${id}`);

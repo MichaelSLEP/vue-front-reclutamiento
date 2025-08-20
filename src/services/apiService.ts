@@ -1,19 +1,15 @@
 import axios from "axios";
 
-const fullUrl = window.location.href;
-let apiUrl = import.meta.env.VITE_API_URL;
-console.log("URL completa:", fullUrl);
-
-if (!fullUrl.includes("localhost")) {
-  apiUrl = "http://10.200.1.145:8000/api";
+if (!window.location.href.includes("localhost")) {
+  import.meta.env.VITE_API_URL = "http://10.200.1.145:8000/api";
 }
+console.log("API URL:", import.meta.env.VITE_API_URL);
 
 const api = axios.create({
-  baseURL: apiUrl as string,
+  baseURL: import.meta.env.VITE_API_URL as string,
   headers: {
     "Content-Type": "application/json",
   },
 });
-console.log("API URL:", apiUrl);
 
 export default api;
